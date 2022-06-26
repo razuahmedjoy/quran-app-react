@@ -18,7 +18,7 @@ const useSurahs = () => {
 
     }, [])
 
-    console.log(surahs)
+    // console.log(surahs)
 
     return { surahs, setSurahs };
 
