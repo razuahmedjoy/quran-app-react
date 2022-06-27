@@ -11,7 +11,7 @@ module.exports = {
       },
       fontFamily: {
         noorEHidayat: ["Noor-e-hidayat"],
-        saleemQuranFont: ["PDMS Saleem QuranFont"],
+        saleemQuran: ["PDMS Saleem QuranFont"]
       },
     }
   },

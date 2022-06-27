@@ -3,7 +3,7 @@ import useSurahs from '../../hooks/useSurahs';
 import Header from '../Header/Header';
 
 
-const fonts = ['noorEHidayat','saleemQuranFont'];
+const fonts = ['noorEHidayat','saleemQuran'];
 
 const HomePage = () => {
     const { surahs } = useSurahs();
@@ -98,7 +98,7 @@ const HomePage = () => {
                     ayatDetails ?
 
                         <>
-                            <h2 className={`text-center text-md md:text-4xl text-white font-${fonts[arabicFont]}`}>
+                            <h2 className={`text-center text-md md:text-4xl text-white ${!arabicFont ? `font-noorEHidayat` : `font-${fonts[arabicFont]}`}`}>
                                 {ayatDetails?.ayah?.text}
                             </h2>
                             <h2 className="text-center text-md md:text-3xl text-white">

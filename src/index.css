@@ -20,8 +20,8 @@
 
 @font-face{
   font-family:"PDMS Saleem QuranFont";
-
-  src:url(./assets/fonts/_PDMS_Saleem_QuranFont.f644bc6.woff2) format("woff2"),url(./assets/fonts/_PDMS_Saleem_QuranFont.bc639b1.woff) format("woff");
+  
+  src:url(./assets/fonts/Saleem.woff)format("woff");
 
   font-weight:400;
 
