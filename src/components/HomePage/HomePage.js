@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import useSurahs from '../../hooks/useSurahs';
 import Header from '../Header/Header';
 
+import { AiOutlineArrowRight, AiOutlineArrowLeft } from 'react-icons/ai';
 
-const fonts = ['noorEHidayat','saleemQuran'];
+const fonts = ['noorEHidayat', 'saleemQuran'];
 
 const HomePage = () => {
     const { surahs } = useSurahs();
@@ -11,8 +12,9 @@ const HomePage = () => {
     const [selectedAyat, setSelectedAyat] = useState(1);
     const [ayatDetails, setAyatDetails] = useState({});
     const [selectedQuari, setSelectedQuari] = useState(1);
+    const [loading, setLoading] = useState(false)
 
-    const [arabicFont,setArabicFont] = useState(0);
+    const [arabicFont, setArabicFont] = useState(0);
 
 
 
@@ -33,6 +35,8 @@ const HomePage = () => {
 
         if (selectedSurah !== undefined && selectedAyat && selectedQuari) {
 
+            setLoading(true);
+
             const url = `https://api.quranref.com/api/${selectedSurah?.id}/${selectedAyat}?audio_version=${selectedQuari}`;
             // console.log(url);
 
@@ -40,6 +44,7 @@ const HomePage = () => {
                 const res = await fetch(url);
                 const data = await res.json();
                 setAyatDetails(data.data);
+                setLoading(false);
 
             }
             fetchAyatDetails()
@@ -60,7 +65,22 @@ const HomePage = () => {
     }
     // console.log(ayatDetails)
 
-    const playNext = (e) => {
+    const playPrev = () => {
+        if (ayatDetails.prev_surah !== selectedSurah.id) {
+            const newSelectedSurah = surahs.find(surah => surah.id === ayatDetails.prev_surah);
+            setSelectedSurah(newSelectedSurah);
+            setSelectedAyat(ayatDetails.prev_ayah)
+        }
+        else {
+            setSelectedAyat(ayatDetails.prev_ayah)
+        }
+
+
+        // console.log(selectedSurah,selectedAyat)
+
+
+    }
+    const playNext = () => {
         if (ayatDetails.next_surah !== selectedSurah.id) {
             const newSelectedSurah = surahs.find(surah => surah.id === ayatDetails.next_surah);
             setSelectedSurah(newSelectedSurah);
@@ -92,26 +112,40 @@ const HomePage = () => {
             />
 
 
-            <main className="flex flex-col justify-center items-center px-5 gap-y-8">
+            <main className="flex justify-between items-center px-1 md:px-5 gap-x-2 gap-y-8 py-3 md:py-2">
+                <div>
+                    <div onClick={playPrev} className="w-[30px] h-[30px] rounded-full bg-gray-800 flex justify-center items-center">
+                        <AiOutlineArrowLeft color='white' size={20} className='cursor-pointer' />
+                    </div>
+                </div>
 
                 {
-                    ayatDetails ?
+                    !loading ?
 
-                        <>
+                        <div className="p-1 md:p-5">
                             <h2 className={`text-center text-md md:text-4xl text-white ${!arabicFont ? `font-noorEHidayat` : `font-${fonts[arabicFont]}`}`}>
                                 {ayatDetails?.ayah?.text}
                             </h2>
-                            <h2 className="text-center text-md md:text-3xl text-white">
+                            <h2 className="text-center text-md md:text-3xl text-white my-6">
                                 {ayatDetails?.ayah?.text_bn}
                             </h2>
                             <h4 className="text-center text-sm md:text-lg text-white">
                                 {ayatDetails?.ayah?.text_en}
                             </h4>
 
-                        </>
+                        </div>
 
-                        : <div><h1 className="text-center text-2xl">Loading..</h1></div>
+                        : <div class="flex items-center justify-center ">
+                            <div class="w-16 h-16 border-b-2 border-white rounded-full animate-spin"></div>
+                        </div>
                 }
+
+                <div>
+                    <div onClick={playNext} className="w-[30px] h-[30px] rounded-full bg-gray-800 flex justify-center items-center">
+
+                        <AiOutlineArrowRight color='white' size={20} className='cursor-pointer' />
+                    </div>
+                </div>
             </main>
 
             <div>
