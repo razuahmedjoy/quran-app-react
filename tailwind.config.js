@@ -6,9 +6,13 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "mainBg": `url('/public/bg.jpg')`,
+        "mainBg": `url('https://source.unsplash.com/1600x900/?nature')`,
 
-      }
+      },
+      fontFamily: {
+        noorEHidayat: ["Noor-e-hidayat"],
+        saleemQuranFont: ["PDMS Saleem QuranFont"],
+      },
     }
   },
   plugins: [require("daisyui")],

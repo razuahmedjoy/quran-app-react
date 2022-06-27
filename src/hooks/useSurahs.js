@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
-
 const useSurahs = () => {
 
     const [surahs, setSurahs] = useState([]);

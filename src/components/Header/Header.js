@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import useSurahs from '../../hooks/useSurahs';
+import React, { useEffect } from 'react';
 
-const Header = ({surahs,selectedSurah,setSelectedSurah,selectedAyat,setSelectedAyat}) => {
+const Header = ({surahs,selectedSurah,setSelectedSurah,selectedAyat,setSelectedAyat,fonts,setArabicFont}) => {
 
     
 
@@ -30,7 +29,7 @@ const Header = ({surahs,selectedSurah,setSelectedSurah,selectedAyat,setSelectedA
 
     // console.log(selectedSurah)
     return (
-        <header className="flex flex-wrap justify-start items-center gap-y-4 w-full md:w-1/2 gap-x-4">
+        <header className="flex flex-wrap justify-start items-center gap-y-4 w-full  gap-x-4">
             <div className="w-full md:w-fit">
                 <select onChange={setSurah} className="select w-full md:w-fit select-bordered bg-gray-800 text-white">
 
@@ -53,6 +52,21 @@ const Header = ({surahs,selectedSurah,setSelectedSurah,selectedAyat,setSelectedA
 
                         [...Array(selectedSurah?.number_of_ayahs).keys()].map(i => 
                         <option key={i} value={i + 1} selected={selectedAyat === i+1}>Ayat {i + 1}</option>)
+
+                    }
+                </select>
+            </div>
+
+
+            {/* set arabic Fonts */}
+            <div className="w-full md:w-fit ml-auto hidden md:block">
+                <label htmlFor="font" className="text-white text-sm mr-2">Select Arabic Font</label>
+                <select onChange={(e)=>setArabicFont(parseInt(e.target.value))} className="select w-full md:w-fit select-bordered bg-gray-800 text-white">
+
+                    {
+
+                            fonts.map((font,i) => 
+                        <option key={i} value={i} >{font}</option>)
 
                     }
                 </select>

@@ -3,12 +3,18 @@ import useSurahs from '../../hooks/useSurahs';
 import Header from '../Header/Header';
 
 
+const fonts = ['noorEHidayat','saleemQuranFont'];
+
 const HomePage = () => {
-    const { surahs, setSurahs } = useSurahs();
+    const { surahs } = useSurahs();
     const [selectedSurah, setSelectedSurah] = useState({});
     const [selectedAyat, setSelectedAyat] = useState(1);
     const [ayatDetails, setAyatDetails] = useState({});
     const [selectedQuari, setSelectedQuari] = useState(1);
+
+    const [arabicFont,setArabicFont] = useState(0);
+
+
 
     const [quari, setQuari] = useState([]);
 
@@ -28,7 +34,7 @@ const HomePage = () => {
         if (selectedSurah !== undefined && selectedAyat && selectedQuari) {
 
             const url = `https://api.quranref.com/api/${selectedSurah?.id}/${selectedAyat}?audio_version=${selectedQuari}`;
-            console.log(url);
+            // console.log(url);
 
             const fetchAyatDetails = async () => {
                 const res = await fetch(url);
@@ -71,7 +77,7 @@ const HomePage = () => {
     }
 
     return (
-        <div className="h-screen bg-blend-overlay bg-mainBg bg-cover bg-no-repeat opacity-90 bg-gray-900 py-5 px-2 md:px-10 flex flex-col justify-between">
+        <div className="min-h-screen bg-blend-overlay bg-mainBg bg-cover bg-no-repeat opacity-90 bg-gray-900 py-5 px-2 md:px-10 flex flex-col justify-between">
 
 
             <Header
@@ -80,6 +86,8 @@ const HomePage = () => {
                 setSelectedSurah={setSelectedSurah}
                 selectedAyat={selectedAyat}
                 setSelectedAyat={setSelectedAyat}
+                fonts={fonts}
+                setArabicFont={setArabicFont}
 
             />
 
@@ -90,10 +98,10 @@ const HomePage = () => {
                     ayatDetails ?
 
                         <>
-                            <h2 className="text-center text-lg md:text-3xl text-white">
+                            <h2 className={`text-center text-md md:text-4xl text-white font-${fonts[arabicFont]}`}>
                                 {ayatDetails?.ayah?.text}
                             </h2>
-                            <h2 className="text-center text-lg md:text-3xl text-white">
+                            <h2 className="text-center text-md md:text-3xl text-white">
                                 {ayatDetails?.ayah?.text_bn}
                             </h2>
                             <h4 className="text-center text-sm md:text-lg text-white">
@@ -125,7 +133,7 @@ const HomePage = () => {
                     <div>
                         {
                             ayatDetails?.ayah?.audio &&
-                            <audio onEnded={playNext} id="main-player" src={ayatDetails?.ayah?.audio} autoPlay="autoplay" controls="controls"></audio>
+                            <audio onEnded={playNext} id="main-player" src={ayatDetails?.ayah?.audio} autoPlay="true" controls="controls"></audio>
                         }
                     </div>
 
