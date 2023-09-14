@@ -7,11 +7,12 @@ import { AiOutlineArrowRight, AiOutlineArrowLeft } from 'react-icons/ai';
 const fonts = ['noorEHidayat', 'saleemQuran'];
 
 const HomePage = () => {
+    const [allSurahs, setAllSurahs] = useState([]);
     const { surahs } = useSurahs();
     const [selectedSurah, setSelectedSurah] = useState({});
     const [selectedAyat, setSelectedAyat] = useState(1);
     const [ayatDetails, setAyatDetails] = useState({});
-    const [selectedQuari, setSelectedQuari] = useState(1);
+    const [selectedQuari, setSelectedQuari] = useState(6);
     const [loading, setLoading] = useState(false)
 
     const [arabicFont, setArabicFont] = useState(0);
@@ -21,15 +22,52 @@ const HomePage = () => {
     const [quari, setQuari] = useState([]);
 
 
+
     useEffect(() => {
         const fetchQuari = async () => {
-            const res = await fetch("https://api.quranref.com/api/quaries");
+            const res = await fetch("http://api.alquran.cloud/v1/edition?format=audio&language=ar");
             const data = await res.json();
-            setQuari(data.quaries);
+ 
+            setQuari(data.data)
+
         }
 
         fetchQuari();
+        const createData = async ()=>{
+            const res = await fetch("http://api.alquran.cloud/v1/quran/ar.alafasy");
+            const data1 = await res.json();
+            const enData = data1.data.surahs;
+
+            const res2 = await fetch("http://api.alquran.cloud/v1/quran/bn.bengali");
+            const data2 = await res2.json();
+            const bnData = data2.data.surahs;
+
+            const res3 = await fetch("http://api.alquran.cloud/v1/quran/en.ahmedali");
+            const data3 = await res3.json();
+            const qData = data3.data.surahs;
+
+            const newData = enData.map((surah, index) => {
+                return {
+                    ...surah,
+                    ayahs: surah.ayahs.map((ayah, i) => {
+                        return {
+                            ...ayah,
+                            bnText: bnData[index].ayahs[i].text,
+                            enText: qData[index].ayahs[i].text
+                        }
+                    })
+                }
+            })
+            setAllSurahs(newData)
+            console.log(newData)
+
+        }
+        createData()
+
+
     }, [])
+
+
 
     useEffect(() => {
 
@@ -37,13 +75,14 @@ const HomePage = () => {
 
             setLoading(true);
 
-            const url = `https://api.quranref.com/api/${selectedSurah?.id}/${selectedAyat}?audio_version=${selectedQuari}`;
-            // console.log(url);
+            const url = `http://api.alquran.cloud/v1/ayah/${selectedSurah?.number}:${selectedAyat}/${quari[selectedQuari]?.identifier}`;
+
 
             const fetchAyatDetails = async () => {
                 const res = await fetch(url);
                 const data = await res.json();
                 setAyatDetails(data.data);
+        
                 setLoading(false);
 
             }
@@ -54,44 +93,48 @@ const HomePage = () => {
 
     }, [selectedSurah, selectedAyat, selectedQuari])
 
-    // console.log(ayatDetails);
+ 
 
     const quariHandler = (e) => {
 
         const { value } = e.target;
-        // console.log(value)
+
         setSelectedQuari(parseInt(value))
 
     }
-    // console.log(ayatDetails)
+
 
     const playPrev = () => {
-        if (ayatDetails.prev_surah !== selectedSurah.id) {
-            const newSelectedSurah = surahs.find(surah => surah.id === ayatDetails.prev_surah);
-            setSelectedSurah(newSelectedSurah);
-            setSelectedAyat(ayatDetails.prev_ayah)
-        }
-        else {
-            setSelectedAyat(ayatDetails.prev_ayah)
-        }
 
-
-        // console.log(selectedSurah,selectedAyat)
+        if (ayatDetails.numberInSurah > 1) {
+            setSelectedAyat(ayatDetails.numberInSurah - 1)
+        } else {
+            if(selectedSurah.number >1){
+                setSelectedSurah(surahs[selectedSurah?.number-2]);
+                console.log("done")
+            }else{
+                setSelectedSurah(surahs[113]);
+            }
+            setSelectedAyat(1)
+        }
+ 
 
 
     }
     const playNext = () => {
-        if (ayatDetails.next_surah !== selectedSurah.id) {
-            const newSelectedSurah = surahs.find(surah => surah.id === ayatDetails.next_surah);
-            setSelectedSurah(newSelectedSurah);
+
+
+        if (ayatDetails.numberInSurah < ayatDetails.surah.numberOfAyahs) {
+            setSelectedAyat(ayatDetails.numberInSurah + 1)
+        } else {
+            if(selectedSurah?.number < 114){
+                setSelectedSurah(surahs[selectedSurah?.number]);
+            }else{
+                setSelectedSurah(surahs[0]);
+            }
             setSelectedAyat(1)
         }
-        else {
-            setSelectedAyat(ayatDetails.next_ayah)
-        }
 
-
-        // console.log(selectedSurah,selectedAyat)
 
 
     }
@@ -124,19 +167,19 @@ const HomePage = () => {
 
                         <div className="p-1 md:p-5">
                             <h2 className={`text-center text-md md:text-4xl text-white ${!arabicFont ? `font-noorEHidayat` : `font-${fonts[arabicFont]}`}`}>
-                                {ayatDetails?.ayah?.text}
+                            {allSurahs[selectedSurah?.number-1]?.ayahs[selectedAyat-1].text}
                             </h2>
                             <h2 className="text-center text-md md:text-3xl text-white my-6">
-                                {ayatDetails?.ayah?.text_bn}
+                                {allSurahs[selectedSurah?.number-1]?.ayahs[selectedAyat-1]?.bnText}
                             </h2>
                             <h4 className="text-center text-sm md:text-lg text-white">
-                                {ayatDetails?.ayah?.text_en}
+                            {allSurahs[selectedSurah?.number-1]?.ayahs[selectedAyat-1]?.enText}
                             </h4>
 
                         </div>
 
-                        : <div class="flex items-center justify-center ">
-                            <div class="w-16 h-16 border-b-2 border-white rounded-full animate-spin"></div>
+                        : <div className="flex items-center justify-center ">
+                            <div className="w-16 h-16 border-b-2 border-white rounded-full animate-spin"></div>
                         </div>
                 }
 
@@ -153,11 +196,11 @@ const HomePage = () => {
                 <div className="w-full flex flex-wrap gap-y-5 justify-center items-center gap-x-4">
 
                     <div>
-                        <select onChange={quariHandler} className="select w-full select-bordered bg-gray-800 text-white">
+                        <select value={selectedQuari} onChange={quariHandler} className="select w-full select-bordered bg-gray-800 text-white" >
                             {
                                 quari && quari.length > 0 ?
                                     (
-                                        quari.map((quari, i) => <option value={quari.id} key={quari.id}>{i + 1}. {quari.name}</option>)
+                                        quari.map((quari, i) => <option value={i + 1} key={i}>{i + 1}. {quari.englishName}</option>)
                                     )
                                     :
                                     <option>Loading</option>
@@ -166,8 +209,8 @@ const HomePage = () => {
                     </div>
                     <div>
                         {
-                            ayatDetails?.ayah?.audio &&
-                            <audio onEnded={playNext} id="main-player" src={ayatDetails?.ayah?.audio} autoPlay="true" controls="controls"></audio>
+                            ayatDetails?.audio &&
+                            <audio onEnded={playNext} id="main-player" src={ayatDetails?.audio} autoPlay={true} controls="controls"></audio>
                         }
                     </div>
 
