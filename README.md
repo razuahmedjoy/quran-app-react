@@ -1,5 +1,5 @@
 # Quran Recitation App with React
-Live Link [QuranApp]([https://quran.razuahmedjoy.com](https://listentoquran.netlify.app/))
+Live Link [QuranApp]([https://quran.razuahmedjoy.com](https://listentoquran.netlify.app/])
 
 ## Features and tech Usage
 
